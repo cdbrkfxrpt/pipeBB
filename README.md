@@ -1,5 +1,5 @@
 
-![pipeBB Logo](./misc/pipeBB.png){:width="50"}
+![pipeBB Logo](./misc/pipeBB.png)
 
 `pipeBB` is a library with (partially stateful) building blocks for processing
 pipelines. It enables transfer from visually implemented directed acyclical
