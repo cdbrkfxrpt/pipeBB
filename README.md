@@ -1,8 +1,5 @@
 
-![pipeBB Logo](./misc/pipeBB.png)
-
-[![build status](https://gitlab.ingenieurbuero-krug.de/ibk/scruBB/badges/master/build.svg)](https://gitlab.ingenieurbuero-krug.de/ibk/scruBB/commits/master)
-[![coverage report](https://gitlab.ingenieurbuero-krug.de/ibk/scruBB/badges/master/coverage.svg)](https://gitlab.ingenieurbuero-krug.de/ibk/scruBB/commits/master)
+<center><img src="./misc/pipeBB.png" alt="image" style="width:15.0%" /></center>
 
 `pipeBB` is a library with (partially stateful) building blocks for processing
 pipelines. It enables transfer from visually implemented directed acyclical
