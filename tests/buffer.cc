@@ -1,8 +1,18 @@
-// Copyright 2017 Ingenieurbüro Krug <info@ingenieurbuero-krug.de>
 //
-// Maintainer: Florian Eich <florian.eich@ingenieurbuero-krug.de>
+// Copyright 2018- Florian Eich <florian.eich@gmail.com>
 //
-// All rights reserved.
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
 
 #include "catch.h"
 
@@ -15,16 +25,16 @@
 // explicitly instantiate class to make sure compiler generates the class fully
 // (enables meaningful test coverage analysis)
 //
-template class scrubb::buffer<scrubb::channel<double>>;
+template class pipebb::buffer<pipebb::channel<double>>;
 //
 
 
 TEST_CASE("functionality of buffer gates", "[buffer_gates]") {
-  scrubb::channel<double> p_manifold{"p_manifold", "mbar", 1.0, 0.0};
+  pipebb::channel<double> p_manifold{"p_manifold", "mbar", 1.0, 0.0};
 
   SECTION("buffer") {
     // Instantiate buffer object.
-    auto buf = scrubb::make_buffer(p_manifold);
+    auto buf = pipebb::make_buffer(p_manifold);
 
     //
     // The following usage is also possible and (in this case) equally elegant
@@ -32,12 +42,12 @@ TEST_CASE("functionality of buffer gates", "[buffer_gates]") {
     // make_approximate function is provided for consistency with the other
     // library elements.
     //
-    // scrubb::buffer cxx_17_ctor_test{p_manifold};
+    // pipebb::buffer cxx_17_ctor_test{p_manifold};
     //
     //
     // Without a C++17-capable compiler (g++ 7 or later), this becomes:
     //
-    scrubb::buffer<decltype(p_manifold)> cxx_14_ctor_test{p_manifold};
+    pipebb::buffer<decltype(p_manifold)> cxx_14_ctor_test{p_manifold};
     //
 
     p_manifold << 2500.0;
@@ -59,7 +69,7 @@ TEST_CASE("functionality of buffer gates", "[buffer_gates]") {
 
   SECTION("switched_buffer") {
     // Instantiate switch_buffer object.
-    auto sbuf = scrubb::make_switched_buffer(p_manifold);
+    auto sbuf = pipebb::make_switched_buffer(p_manifold);
 
     //
     // The following usage is also possible and (in this case) equally elegant
@@ -67,12 +77,12 @@ TEST_CASE("functionality of buffer gates", "[buffer_gates]") {
     // make_approximate function is provided for consistency with the other
     // library elements.
     //
-    // scrubb::switched_buffer cxx17_ctor_test{p_manifold};
+    // pipebb::switched_buffer cxx17_ctor_test{p_manifold};
     //
     //
     // Without a C++17-capable compiler (g++ 7 or later), this becomes:
     //
-    scrubb::switched_buffer<decltype(p_manifold)> cxx14_ctor_test{p_manifold};
+    pipebb::switched_buffer<decltype(p_manifold)> cxx14_ctor_test{p_manifold};
     //
 
     REQUIRE(!sbuf.state());

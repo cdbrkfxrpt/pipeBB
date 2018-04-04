@@ -1,8 +1,18 @@
-// Copyright 2017 Ingenieurbüro Krug <info@ingenieurbuero-krug.de>
 //
-// Maintainer: Florian Eich <florian.eich@ingenieurbuero-krug.de>
+// Copyright 2018- Florian Eich <florian.eich@gmail.com>
 //
-// All rights reserved.
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
 
 #include "catch.h"
 
@@ -15,14 +25,14 @@
 // explicitly instantiate class to make sure compiler generates the class fully
 // (enables meaningful test coverage analysis)
 //
-template class scrubb::reset_counter<scrubb::channel<double>>;
-template class scrubb::boolean_counter<scrubb::channel<double>>;
+template class pipebb::reset_counter<pipebb::channel<double>>;
+template class pipebb::boolean_counter<pipebb::channel<double>>;
 //
 
 
 TEST_CASE("functionality of counters", "[counters]") {
   SECTION("counter") {
-    scrubb::counter counter;
+    pipebb::counter counter;
     REQUIRE(counter() == 0);
     REQUIRE(counter.step() == 1);
     REQUIRE(counter() == 1);
@@ -33,11 +43,11 @@ TEST_CASE("functionality of counters", "[counters]") {
     REQUIRE(counter() == 4);
   }
 
-  scrubb::channel<double> p_manifold{"p_manifold", "mbar", 1.0, 0.0};
-  scrubb::threshold<decltype(p_manifold)> thresh{p_manifold, 2570.0};
+  pipebb::channel<double> p_manifold{"p_manifold", "mbar", 1.0, 0.0};
+  pipebb::threshold<decltype(p_manifold)> thresh{p_manifold, 2570.0};
 
   SECTION("resettable_counter") {
-    scrubb::reset_counter<decltype(thresh)> rcounter{thresh};
+    pipebb::reset_counter<decltype(thresh)> rcounter{thresh};
 
     p_manifold << 2500.0;
 
@@ -49,7 +59,7 @@ TEST_CASE("functionality of counters", "[counters]") {
   }
 
   SECTION("boolean_counter") {
-    scrubb::boolean_counter<decltype(thresh)> count{thresh};
+    pipebb::boolean_counter<decltype(thresh)> count{thresh};
 
     p_manifold << 2500.0;
 
@@ -71,8 +81,8 @@ TEST_CASE("functionality of counters", "[counters]") {
   }
 
   SECTION("counter_watchdog") {
-    scrubb::counter          counter;
-    scrubb::counter_watchdog twd{counter};
+    pipebb::counter          counter;
+    pipebb::counter_watchdog twd{counter};
 
     REQUIRE(!twd());
 

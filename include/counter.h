@@ -1,21 +1,31 @@
-/* ------------------------------------------------------------------------- *
- * Copyright 2017 Ingenieurbüro Krug. All rights reserved.
- *
- * Author: Florian Eich <florian.eich@ingenieurbuero-krug.de>
- * ------------------------------------------------------------------------- */
+//
+// Copyright 2018- Florian Eich <florian.eich@gmail.com>
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
 
-#ifndef SCRUBB_CORE_COUNTER_H_
-#define SCRUBB_CORE_COUNTER_H_
+#ifndef PIPEBB_COUNTER_H_
+#define PIPEBB_COUNTER_H_
 
 
-namespace scrubb {
+namespace pipebb {
 
 
 /*!
  * \brief Very simple gate to count up, e.g. execution cycles.
  *
  * The `counter` gate is as simple as it gets and technically only provided for
- * consistency with the `scruBB` paradigm that everything must be callable. The
+ * consistency with the `pipeBB` paradigm that everything must be callable. The
  * `make_counter` function is provided for library consistency as well.
  *
  * **Usage**
@@ -48,7 +58,7 @@ public:
    * \brief   Get current value of `counter`.
    * \returns Current value of the gate.
    *
-   * Every scruBB gate is callable. When called, it calls the input object and
+   * Every pipeBB gate is callable. When called, it calls the input object and
    * takes appropriate action with the result.
    */
   value_t operator()() noexcept { return _counter; }
@@ -93,7 +103,7 @@ private:
  *
  * A `counter` object can be instantiated by calling the constructor of the
  * `counter` class. This function is provided to ensure consistency with the
- * other `scruBB` gates, thus making usage uniform and expectable.
+ * other `pipeBB` gates, thus making usage uniform and expectable.
  *
  * **Usage**
  * \include make_counter.cc
@@ -147,7 +157,7 @@ public:
    * \brief   Update `reset_counter` content, then get value.
    * \returns Current (updated) value of the gate.
    *
-   * Every scruBB gate is callable. When called, it calls the input object and
+   * Every pipeBB gate is callable. When called, it calls the input object and
    * takes appropriate action with the result.
    */
   value_t operator()() noexcept {
@@ -231,7 +241,7 @@ public:
    * \brief   Update `boolean_counter` content, then get value.
    * \returns Current (updated) value of the gate.
    *
-   * Every scruBB gate is callable. When called, it calls the input object and
+   * Every pipeBB gate is callable. When called, it calls the input object and
    * takes appropriate action with the result.
    */
   value_t operator()() noexcept {
@@ -302,7 +312,7 @@ public:
    * \brief   Get current value of `counter_watchdog`.
    * \returns Current value of the gate.
    *
-   * Every scruBB gate is callable. When called, it calls the input object and
+   * Every pipeBB gate is callable. When called, it calls the input object and
    * takes appropriate action with the result.
    */
   bool operator()() noexcept {
@@ -328,7 +338,7 @@ private:
  *
  * A `counter` object can be instantiated by calling the constructor of the
  * `counter` class. This function is provided to ensure consistency with the
- * other `scruBB` gates, thus making usage uniform and expectable.
+ * other `pipeBB` gates, thus making usage uniform and expectable.
  *
  * **Usage**
  * \include make_counter.cc
@@ -337,6 +347,6 @@ inline counter_watchdog make_counter_watchdog(counter & c) noexcept {
   return {c};
 }
 
-}  // namespace scrubb
+}  // namespace pipebb
 
-#endif  // SCRUBB_CORE_COUNTER_H_
+#endif  // PIPEBB_COUNTER_H_

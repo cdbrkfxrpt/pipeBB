@@ -1,8 +1,18 @@
-// Copyright 2017 Ingenieurbüro Krug <info@ingenieurbuero-krug.de>
 //
-// Maintainer: Florian Eich <florian.eich@ingenieurbuero-krug.de>
+// Copyright 2018- Florian Eich <florian.eich@gmail.com>
 //
-// All rights reserved.
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
 
 #include "catch.h"
 
@@ -13,8 +23,8 @@
 
 TEST_CASE("combined gates functionality", "[combined]") {
   SECTION("comparative") {
-    scrubb::channel<unsigned>          n_rpm{"n_rpm", "unit", 1, 0};
-    scrubb::threshold<decltype(n_rpm)> thresh{n_rpm, 3000};
+    pipebb::channel<unsigned>          n_rpm{"n_rpm", "unit", 1, 0};
+    pipebb::threshold<decltype(n_rpm)> thresh{n_rpm, 3000};
 
     n_rpm << 2500;
     REQUIRE(!thresh());
@@ -26,10 +36,10 @@ TEST_CASE("combined gates functionality", "[combined]") {
   SECTION("flow control") {}
 
   SECTION("block combinations") {
-    scrubb::channel<double> fun{"fun", "rad", 1, 0};
+    pipebb::channel<double> fun{"fun", "rad", 1, 0};
 
-    scrubb::gradient<decltype(fun)>   grad{fun};
-    scrubb::threshold<decltype(grad)> thresh{grad, 50};
+    pipebb::gradient<decltype(fun)>   grad{fun};
+    pipebb::threshold<decltype(grad)> thresh{grad, 50};
 
     fun << 200.0;
     REQUIRE(thresh());
@@ -37,9 +47,9 @@ TEST_CASE("combined gates functionality", "[combined]") {
   }
 
   SECTION("varstep_gradient") {
-    scrubb::channel<double> fun{"fun", "rad", 1, 0};
+    pipebb::channel<double> fun{"fun", "rad", 1, 0};
 
-    scrubb::varstep_gradient<decltype(fun), 3> grad{fun};
+    pipebb::varstep_gradient<decltype(fun), 3> grad{fun};
 
     fun << 200.0;
     REQUIRE(grad() == 200.0);

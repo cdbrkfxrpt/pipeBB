@@ -1,8 +1,18 @@
-// Copyright 2017 Ingenieurbüro Krug <info@ingenieurbuero-krug.de>
 //
-// Maintainer: Florian Eich <florian.eich@ingenieurbuero-krug.de>
+// Copyright 2018- Florian Eich <florian.eich@gmail.com>
 //
-// All rights reserved.
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
 
 #include "catch.h"
 
@@ -14,34 +24,34 @@
 // explicitly instantiate class to make sure compiler generates the class fully
 // (enables meaningful test coverage analysis)
 //
-template class scrubb::logic_gate<std::logical_and<bool>,
-                                  scrubb::threshold<scrubb::channel<bool>>,
-                                  scrubb::threshold<scrubb::channel<bool>>>;
-template class scrubb::and_gate<scrubb::threshold<scrubb::channel<bool>>,
-                                scrubb::threshold<scrubb::channel<bool>>>;
-template class scrubb::or_gate<scrubb::threshold<scrubb::channel<bool>>,
-                               scrubb::threshold<scrubb::channel<bool>>>;
-template class scrubb::not_gate<scrubb::threshold<scrubb::channel<bool>>>;
+template class pipebb::logic_gate<std::logical_and<bool>,
+                                  pipebb::threshold<pipebb::channel<bool>>,
+                                  pipebb::threshold<pipebb::channel<bool>>>;
+template class pipebb::and_gate<pipebb::threshold<pipebb::channel<bool>>,
+                                pipebb::threshold<pipebb::channel<bool>>>;
+template class pipebb::or_gate<pipebb::threshold<pipebb::channel<bool>>,
+                               pipebb::threshold<pipebb::channel<bool>>>;
+template class pipebb::not_gate<pipebb::threshold<pipebb::channel<bool>>>;
 //
 
 TEST_CASE("functionality of the logic gates", "[logic]") {
-  scrubb::channel<unsigned>          n_rpm{"n_rpm", "unit", 1, 0};
-  scrubb::threshold<decltype(n_rpm)> thresh_rpm{n_rpm, 3000};
+  pipebb::channel<unsigned>          n_rpm{"n_rpm", "unit", 1, 0};
+  pipebb::threshold<decltype(n_rpm)> thresh_rpm{n_rpm, 3000};
 
-  scrubb::channel<double> alpha_throttle{"alpha_trottle", "rad", 1.0, 0.0};
-  scrubb::threshold<decltype(alpha_throttle)> thresh_throttle{alpha_throttle,
+  pipebb::channel<double> alpha_throttle{"alpha_trottle", "rad", 1.0, 0.0};
+  pipebb::threshold<decltype(alpha_throttle)> thresh_throttle{alpha_throttle,
                                                               0.5};
 
-  scrubb::channel<double>              T_water{"T_water", "deg", 1.0, 0.0};
-  scrubb::threshold<decltype(T_water)> thresh_watertemp{T_water, 120.0};
+  pipebb::channel<double>              T_water{"T_water", "deg", 1.0, 0.0};
+  pipebb::threshold<decltype(T_water)> thresh_watertemp{T_water, 120.0};
 
   SECTION("logic_gate") {
-    scrubb::logic_gate<std::logical_and<bool>,
+    pipebb::logic_gate<std::logical_and<bool>,
                        decltype(thresh_rpm),
                        decltype(thresh_throttle)>
       lgt{thresh_rpm, thresh_throttle};
 
-    scrubb::logic_gate<std::logical_and<bool>,
+    pipebb::logic_gate<std::logical_and<bool>,
                        decltype(thresh_rpm),
                        decltype(thresh_throttle),
                        decltype(thresh_watertemp)>
@@ -67,10 +77,10 @@ TEST_CASE("functionality of the logic gates", "[logic]") {
   }
 
   SECTION("and_gate") {
-    scrubb::and_gate<decltype(thresh_rpm), decltype(thresh_throttle)> agt{
+    pipebb::and_gate<decltype(thresh_rpm), decltype(thresh_throttle)> agt{
       thresh_rpm, thresh_throttle};
 
-    scrubb::and_gate<decltype(thresh_rpm),
+    pipebb::and_gate<decltype(thresh_rpm),
                      decltype(thresh_throttle),
                      decltype(thresh_watertemp)>
       agd{thresh_rpm, thresh_throttle, thresh_watertemp};
@@ -95,10 +105,10 @@ TEST_CASE("functionality of the logic gates", "[logic]") {
   }
 
   SECTION("or_gate") {
-    scrubb::or_gate<decltype(thresh_rpm), decltype(thresh_throttle)> ogt{
+    pipebb::or_gate<decltype(thresh_rpm), decltype(thresh_throttle)> ogt{
       thresh_rpm, thresh_throttle};
 
-    scrubb::or_gate<decltype(thresh_rpm),
+    pipebb::or_gate<decltype(thresh_rpm),
                     decltype(thresh_throttle),
                     decltype(thresh_watertemp)>
       ogd{thresh_rpm, thresh_throttle, thresh_watertemp};
