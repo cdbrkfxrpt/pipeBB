@@ -18,6 +18,7 @@
 #define PIPEBB_CHANNEL_H_
 
 #include <ostream>
+#include <sstream>
 #include <string>
 
 #include "utils.h"
@@ -297,7 +298,7 @@ std::ostream & operator<<(std::ostream & os, channel<T> & chan) {
 inline std::ostream & operator<<(std::ostream & os, channel<bool> & chan) {
   std::ostringstream ss;
 
-  auto unit    = (chan._unit.size() ? chan._unit : "none");
+  auto unit = (chan._unit.size() ? chan._unit : "none");
 
   ss << "channel {\n  "
      << "name:           " << chan._name << ",\n  "
