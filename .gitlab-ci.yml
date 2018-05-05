@@ -12,4 +12,4 @@ build:
   - cmake ..
   - make
   - ./ci_runner
-  - gcovr --object-directory=./tests/CMakeFiles/ci_runner.dir/ -r ../src
+  - gcovr --object-directory=./tests/CMakeFiles/ci_runner.dir/ -r ../include
