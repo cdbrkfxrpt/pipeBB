@@ -1,0 +1,15 @@
+image: debian
+
+
+build:
+  stage: build
+
+  before_script:
+  - apt update && apt install -y git cmake make gcc g++ gcovr
+  - mkdir build && cd build
+
+  script:
+  - cmake ..
+  - make
+  - ./ci_runner
+  - gcovr --object-directory=./tests/CMakeFiles/ci_runner.dir/ -r ../include
