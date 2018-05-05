@@ -1,6 +1,9 @@
 
 <p align="center"><img src="./misc/pipeBB.png" width="15%" /></p>
 
+[![pipeline status](https://gitlab.ingenieurbuero-krug.de/ibk/pipeBB/badges/master/pipeline.svg)](https://gitlab.ingenieurbuero-krug.de/ibk/pipeBB/commits/master)
+[![coverage report](https://gitlab.ingenieurbuero-krug.de/ibk/pipeBB/badges/master/coverage.svg)](https://gitlab.ingenieurbuero-krug.de/ibk/pipeBB/commits/master)
+
 `pipeBB` is a library with (partially stateful) building blocks for processing
 pipelines. It enables transfer from visually implemented directed acyclical
 graphs (DAGs) with processing "blocks" and a directed data flow to be
