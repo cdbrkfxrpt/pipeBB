@@ -133,7 +133,7 @@ class varstep_gradient
   using range_t = ringbuffer<typename input_t::value_t, N>;
 
 public:
-  using value_t = std::int32_t;
+  using value_t = typename input_t::value_t;
 
 public:
   /*!
