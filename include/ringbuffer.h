@@ -21,6 +21,9 @@
 #include <array>
 #include <cstddef>
 #include <cstdint>
+#include <sstream>
+
+#include <iostream>
 
 
 namespace pipebb {
@@ -37,6 +40,7 @@ std::ostream & operator<<(std::ostream &, const ringbuffer<T, N> &);
 
 namespace detail {
 
+
 template <class ringbuffer_t>
 class ringbuffer_iterator
 {
@@ -47,13 +51,16 @@ class ringbuffer_iterator
 
 public:
   using iterator_category = std::bidirectional_iterator_tag;
-  using value_type        = typename ringbuffer_t::value_t;
+  using value_type        = typename ringbuffer_t::value_type;
   using difference_type   = std::ptrdiff_t;
-  using pointer           = self_t *;
-  using reference         = self_t &;
+  using pointer           = typename ringbuffer_t::pointer;
+  using const_pointer     = typename ringbuffer_t::const_pointer;
+  using reference         = typename ringbuffer_t::reference;
+  using const_reference   = typename ringbuffer_t::const_reference;
 
 public:
-  ringbuffer_iterator(ringbuffer_t & rb, index_t pos) : _rb(rb), _pos(pos) {}
+  ringbuffer_iterator(const ringbuffer_t & rb, index_t pos)
+   : _rb(rb), _pos(pos) {}
 
   self_t & operator=(const self_t & other) noexcept {
     _rb  = other._rb;
@@ -62,11 +69,15 @@ public:
     return *this;
   }
 
-  const value_t & operator*() const noexcept {
+  reference operator*() noexcept {
+    return const_cast<ringbuffer_t &>(_rb)[_pos - _rb._begin_pos];
+  }
+
+  const_reference operator*() const noexcept {
     return _rb[_pos - _rb._begin_pos];
   }
 
-  const value_t * operator->() const noexcept {
+  const pointer operator->() const noexcept {
     return &_rb[_pos - _rb._begin_pos];
   }
 
@@ -75,9 +86,9 @@ public:
     return *this;
   }
 
-  self_t operator++(int)noexcept {
+  self_t operator++(int) noexcept {
     self_t tmp{*this};
-    operator++();
+           operator++();
     return tmp;
   }
 
@@ -86,25 +97,25 @@ public:
     return *this;
   }
 
-  self_t operator--(int)noexcept {
-    self_t tmp(*this);
-    operator--();
+  self_t operator--(int) noexcept {
+    self_t tmp{*this};
+           operator--();
     return tmp;
   }
 
-  bool operator==(const self_t & other) const noexcept {
-    return _rb == other._rb && _pos == other._pos;
+  bool operator==(const self_t & rhs) const noexcept {
+    return &_rb == &rhs._rb && _pos == rhs._pos;
   }
 
-  bool operator!=(const self_t & other) const noexcept {
-    return !(*this == other);
+  bool operator!=(const self_t & rhs) const noexcept {
+    return !(*this == rhs);
   }
 
   std::size_t getPos() noexcept { return _pos; }
 
 private:
-  ringbuffer_t _rb;
-  index_t      _pos;
+  const ringbuffer_t & _rb;
+  index_t              _pos;
 };
 
 }  // namespace detail
@@ -125,10 +136,12 @@ public:
   using pointer         = value_t *;
   using const_pointer   = const value_t *;
   using iterator        = detail::ringbuffer_iterator<self_t>;
-  using const_iterator  = detail::ringbuffer_iterator<const self_t>;
+  // using const_iterator         = detail::ringbuffer_iterator<const self_t>;
+  using reverse_iterator = std::reverse_iterator<iterator>;
+  // using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
   friend iterator;
-  friend const_iterator;
+  // friend const_iterator;
 
 public:
   // friend void swap(self_t & first, self_t & second) {
@@ -187,64 +200,53 @@ public:
   /* ----------------------------------------------------------------------- */
 
   /* Iterator -------------------------------------------------------------- */
-  iterator begin() noexcept { return iterator(*this, _begin_pos); }
+  iterator begin() const noexcept { return {*this, _begin_pos}; }
 
-  const_iterator begin() const noexcept {
-    return const_iterator(*this, _begin_pos);
+  iterator end() const noexcept { return {*this, _end_pos}; }
+
+  reverse_iterator rbegin() const noexcept {
+    return std::make_reverse_iterator(end());
   }
 
-  const_iterator cbegin() const noexcept {
-    return const_iterator(*this, _begin_pos);
+  reverse_iterator rend() const noexcept {
+    return std::make_reverse_iterator(begin());
   }
-
-  iterator end() noexcept { return iterator(*this, _end_pos); }
-
-  const_iterator end() const noexcept {
-    return const_iterator(*this, _end_pos);
-  }
-
-  const_iterator cend() const noexcept {
-    return const_iterator(*this, _end_pos);
-  }
-
-  iterator rbegin() noexcept { return --(this->end()); }
-
-  const_iterator rbegin() const noexcept { return --(this->end()); }
-
-  const_iterator crbegin() const noexcept { return --(this->end()); }
-
-  iterator rend() noexcept { return this->end(); }
-
-  const_iterator rend() const noexcept { return this->end(); }
-
-  const_iterator crend() const noexcept { return this->end(); }
   /* ----------------------------------------------------------------------- */
 
   /* Capacity -------------------------------------------------------------- */
-  bool empty() const noexcept { return _size == 0; }
-
+  bool        empty() const noexcept { return _size == 0; }
   std::size_t size() const noexcept { return _size; }
-
   std::size_t max_size() const noexcept { return _capacity; }
   /* ----------------------------------------------------------------------- */
 
   /* Operations ------------------------------------------------------------ */
-  void fill(value_t value) noexcept {
-    for (std::size_t i = 0; i < _capacity; ++i) { push(value); }
-  }
+  void fill(value_t value) noexcept { _data.fill(value); }
   /* ----------------------------------------------------------------------- */
 
   /* Comparison ------------------------------------------------------------ */
-  bool operator==(const self_t & other) const noexcept {
-    if (this->_capacity != other._capacity) { return false; }
+  bool operator==(const self_t & rhs) const noexcept {
+    if (this->_capacity != rhs._capacity) { return false; }
 
-    auto this_it  = this->begin();
-    auto other_it = other.begin();
+    // first version:
+    // auto lhs_it = begin();
+    // auto rhs_it = rhs.begin();
 
-    for (unsigned i = 0; i < _capacity; ++i, ++this_it, ++other_it) {
-      if (*this_it != *other_it) { return false; }
-    }
-    return true;
+    // for (std::size_t i{0}; i < _capacity; ++i, ++lhs_it, ++rhs_it) {
+    //   if (*lhs_it != *rhs_it) { return false; }
+    // }
+
+    // return true;
+
+    // // second version
+    // auto mismatch{std::mismatch(begin(), end(), rhs.begin(), rhs.end())};
+    // if (mismatch.first == end() || mismatch.second == rhs.end()) {
+    //   return false;
+    // }
+    //
+    // return true;
+
+    // production version:
+    return std::equal(begin(), end(), rhs.begin(), rhs.end());
   }
 
   bool operator!=(const self_t & other) const noexcept {
@@ -253,10 +255,10 @@ public:
   /* ----------------------------------------------------------------------- */
 
 private:
-  std::size_t _begin_pos{0};
-  std::size_t _end_pos{0};
-  std::size_t _capacity{N};
-  std::size_t _size{0};
+  std::size_t                _begin_pos{0};
+  std::size_t                _end_pos{0};
+  std::size_t                _capacity{N};
+  std::size_t                _size{0};
   std::array<value_t, N + 1> _data{};
 };
 
@@ -264,16 +266,14 @@ private:
 template <typename T, std::size_t N>
 std::ostream & operator<<(std::ostream & os, const ringbuffer<T, N> & rb) {
   std::ostringstream ss;
-
   ss << "[";
 
-  for (auto & element : rb) { ss << element << ", "; }
+  for (const auto & element : rb) { ss << element << ", "; }
 
   // if elements have been written, get rid of the comma at the end
   if (rb.size()) { ss.seekp(-2, std::ios_base::end); }
 
   ss << "]";
-
   return operator<<(os, ss.str());
 }
 

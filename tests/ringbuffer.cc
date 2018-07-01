@@ -37,18 +37,25 @@ TEST_CASE("basic functionality of ringbuffer container",
 
     REQUIRE(buf == other_buf);
     REQUIRE(!(buf != other_buf));
-
     REQUIRE(buf.begin() == buf.end());
   }
 
-  SECTION("manipulators") {
+  SECTION("iterators") {
     buf.push(5);
     buf.push(6);
+
+    REQUIRE(buf.begin() == buf.rend().base());
+    REQUIRE(buf.end() == buf.rbegin().base());
 
     REQUIRE(*(buf.begin()) == 5);
     REQUIRE(*(buf.rbegin()) == 6);
     REQUIRE(*(buf.end()) == int());
     REQUIRE(*(buf.rend()) == int());
+  }
+
+  SECTION("manipulators") {
+    buf.push(5);
+    buf.push(6);
 
     REQUIRE(buf.front() == 5);
     REQUIRE(buf.back() == 6);
