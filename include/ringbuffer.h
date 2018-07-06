@@ -128,30 +128,19 @@ class ringbuffer
   using value_t = T;
 
 public:
-  using value_type      = value_t;
-  using size_type       = std::size_t;
-  using difference_type = std::ptrdiff_t;
-  using reference       = value_t &;
-  using const_reference = const value_t &;
-  using pointer         = value_t *;
-  using const_pointer   = const value_t *;
-  using iterator        = detail::ringbuffer_iterator<self_t>;
-  // using const_iterator         = detail::ringbuffer_iterator<const self_t>;
+  using value_type       = value_t;
+  using size_type        = std::size_t;
+  using difference_type  = std::ptrdiff_t;
+  using reference        = value_t &;
+  using const_reference  = const value_t &;
+  using pointer          = value_t *;
+  using const_pointer    = const value_t *;
+  using iterator         = detail::ringbuffer_iterator<self_t>;
   using reverse_iterator = std::reverse_iterator<iterator>;
-  // using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
   friend iterator;
-  // friend const_iterator;
 
 public:
-  // friend void swap(self_t & first, self_t & second) {
-  //   using std::swap;
-
-  //   swap(first._pos, second._pos);
-  //   swap(first._capacity, second._capacity);
-  //   swap(first._data, second._data);
-  // }
-
   /* Element access -------------------------------------------------------- */
   void push(value_t value) noexcept {
     _data[_end_pos] = value;
@@ -176,9 +165,12 @@ public:
     _data[_end_pos] = value_t();
   }
 
-  void operator<<(value_t value) noexcept { this->push(value); }
+  self_t & operator<<(value_t value) noexcept {
+    push(value);
+    return *this;
+  }
 
-  reference at(std::size_t i) noexcept { this->operator[](i); }
+  reference at(std::size_t i) noexcept { operator[](i); }
 
   reference operator[](const std::size_t i) noexcept {
     return _data[(_begin_pos + i) % (_capacity + 1)];
@@ -220,32 +212,17 @@ public:
   /* ----------------------------------------------------------------------- */
 
   /* Operations ------------------------------------------------------------ */
-  void fill(value_t value) noexcept { _data.fill(value); }
+  void fill(value_t value) noexcept {
+    _data.fill(value);
+    _begin_pos = 0;
+    _end_pos   = _capacity;
+    _size      = _capacity;
+  }
   /* ----------------------------------------------------------------------- */
 
   /* Comparison ------------------------------------------------------------ */
   bool operator==(const self_t & rhs) const noexcept {
     if (this->_capacity != rhs._capacity) { return false; }
-
-    // first version:
-    // auto lhs_it = begin();
-    // auto rhs_it = rhs.begin();
-
-    // for (std::size_t i{0}; i < _capacity; ++i, ++lhs_it, ++rhs_it) {
-    //   if (*lhs_it != *rhs_it) { return false; }
-    // }
-
-    // return true;
-
-    // // second version
-    // auto mismatch{std::mismatch(begin(), end(), rhs.begin(), rhs.end())};
-    // if (mismatch.first == end() || mismatch.second == rhs.end()) {
-    //   return false;
-    // }
-    //
-    // return true;
-
-    // production version:
     return std::equal(begin(), end(), rhs.begin(), rhs.end());
   }
 
@@ -266,12 +243,13 @@ private:
 template <typename T, std::size_t N>
 std::ostream & operator<<(std::ostream & os, const ringbuffer<T, N> & rb) {
   std::ostringstream ss;
-  ss << "[";
+  ss << "size: " << rb.size() << ", max_size: " << rb.max_size()
+     << ", content: [";
 
-  for (const auto & element : rb) { ss << element << ", "; }
+  for (auto & element : rb) { ss << element << ", "; }
 
   // if elements have been written, get rid of the comma at the end
-  if (rb.size()) { ss.seekp(-2, std::ios_base::end); }
+  if (rb.size() != 0) { ss.seekp(-2, std::ios_base::end); }
 
   ss << "]";
   return operator<<(os, ss.str());

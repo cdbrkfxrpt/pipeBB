@@ -17,8 +17,8 @@
 #ifndef PIPEBB_GRADIENT_H_
 #define PIPEBB_GRADIENT_H_
 
-#include <utility>
 #include <cstdint>
+#include <utility>
 
 #include "ringbuffer.h"
 
@@ -144,7 +144,7 @@ public:
 
   /*!
    * \brief Move copy constructor for `gradient` class.
-   * \param other Universal reference to object to acquire membership of.
+   * \param other Universal reference to object to acquire ownership of.
    */
   varstep_gradient(self_t && other) = default;
 

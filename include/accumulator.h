@@ -70,7 +70,7 @@ public:
    * \returns Current (non-updated) value of the gate.
    */
   value_t report() noexcept {
-    return std::accumulate(_buffer.cbegin(), _buffer.cend(), value_t());
+    return std::accumulate(_buffer.begin(), _buffer.end(), value_t());
   }
 
   /*!
@@ -102,7 +102,7 @@ public:
     // return std::reduce(std::execution::par, _buffer.begin(), _buffer.end());
     //
 
-    return std::accumulate(_buffer.cbegin(), _buffer.cend(), value_t());
+    return std::accumulate(_buffer.begin(), _buffer.end(), value_t());
   }
 
 private:

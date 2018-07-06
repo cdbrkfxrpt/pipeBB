@@ -36,7 +36,7 @@ TEST_CASE("combined gates functionality", "[combined]") {
   SECTION("flow control") {}
 
   SECTION("block combinations") {
-    pipebb::channel<double> fun{"fun", "rad", 1, 0};
+    pipebb::channel<double> fun{"fun", "rad", 1.0, 0.0};
 
     pipebb::gradient<decltype(fun)>   grad{fun};
     pipebb::threshold<decltype(grad)> thresh{grad, 50};
@@ -47,11 +47,12 @@ TEST_CASE("combined gates functionality", "[combined]") {
   }
 
   SECTION("varstep_gradient") {
-    pipebb::channel<double> fun{"fun", "rad", 1, 0};
+    pipebb::channel<double> fun{"fun", "rad", 1.0, 0.0};
 
     pipebb::varstep_gradient<decltype(fun), 3> grad{fun};
 
     fun << 200.0;
+
     REQUIRE(grad() == 200.0);
     REQUIRE(grad() == 200.0);
     REQUIRE(grad() == 0);
